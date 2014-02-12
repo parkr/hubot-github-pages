@@ -1,0 +1,28 @@
+{
+  "name": "hubot-github-pages",
+  "version": "0.1.0",
+  "description": "Get info about the GitHub Pages site for a repo.",
+  "main": "index.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/parkr/hubot-github-pages.git"
+  },
+  "keywords": [
+    "hubot",
+    "jekyll",
+    "jekyllrb",
+    "github pages",
+    "ghpages",
+    "gh-pages",
+    "gh pages"
+  ],
+  "author": "Parker Moore",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/parkr/hubot-github-pages/issues"
+  },
+  "homepage": "https://github.com/parkr/hubot-github-pages"
+}
