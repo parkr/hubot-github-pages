@@ -1,6 +1,6 @@
 {
   "name": "hubot-github-pages",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Get info about the GitHub Pages site for a repo.",
   "main": "index.coffee",
   "scripts": {
