@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/parkr/hubot-github-pages",
   "dependencies": {
-    "githubot": "~0.5.0"
+    "githubot": "~0.5.0",
+    "timeago": "~0.1.0"
   }
 }
