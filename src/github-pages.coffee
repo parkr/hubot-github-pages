@@ -20,6 +20,8 @@
 # Author:
 #   parkr
 
+timeago = require('timeago')
+
 INFO_KEYS       = ["cname", "status", "custom_404"]
 INFO_COMMANDS   = ["info"] + INFO_KEYS
 BUILD_COMMANDS  = ["builds"]
@@ -44,6 +46,9 @@ fetch_from_info = (githubot, repo, command) ->
     info[command]
   else
     info
+
+formatted_build_text = (build) ->
+  "Page build #{build.status}@#{build.commit.substr(0, 7)} Triggered by #{build.pusher} at #{timeago(build.created_at)}."
 
 module.exports = (robot) ->
   github = require("githubot")(robot)
