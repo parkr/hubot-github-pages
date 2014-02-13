@@ -12,25 +12,29 @@
 #
 # Commands:
 #   hubot pages <command> [repo] - fetch <command> about [repo]
-#   hubot pages info [repo] - fetch all info about repo (default: HUBOT_GITHUB_REPO)
-#   hubot pages cname - fetch cname of 
-#   hubot pages latest - fetch latest build
-#   hubot pages builds - fetch 
+#   hubot pages info [repo] - fetch all GHP info (not build info) about repo (default: HUBOT_GITHUB_REPO)
+#   hubot pages status [repo] - fetch the build status
+#   hubot pages cname [repo] - fetch cname
+#   hubot pages custom_404 [repo] - fetch whether there's a custom 404 page
+#   hubot pages latest [repo] - fetch latest build
+#   hubot pages builds [repo] - fetch the latest 30 builds
+#
+# Notes:
+#   Per the GitHub API, you must be the owner of the repo in question.
 #
 # Author:
 #   parkr
 
-console.log("Loading in hubot-github-pages...")
-
 timeago = require('timeago')
 
-INFO_KEYS       = ["cname", "status", "custom_404"]
-INFO_COMMANDS   = ["info"] + INFO_KEYS
-BUILD_COMMANDS  = ["builds"]
-LATEST_COMMANDS = ["latest"]
+INFO_KEYS        = ["cname", "status", "custom_404"]
+INFO_COMMANDS    = ["info"].concat(INFO_KEYS)
+BUILD_COMMANDS   = ["builds"]
+LATEST_COMMANDS  = ["latest"]
+ALLOWED_COMMANDS = INFO_COMMANDS.concat(BUILD_COMMANDS).concat(LATEST_COMMANDS)
 
 endpoint = (repo, command) ->
-  base = "/repos/#{repo}/pages"
+  base = "repos/#{repo}/pages"
   if command in INFO_COMMANDS
     base
   else if command in BUILD_COMMANDS
@@ -39,13 +43,16 @@ endpoint = (repo, command) ->
     "#{base}/builds/latest"
 
 github_pages_info = (githubot, repo, command) ->
+  githubot.handleErrors (response) ->
+    console.log "Error fetching info about GitHub Pages site for #{repo}: #{reponse.statusCode} #{response.error}"
+  pages_info = null
   githubot.get endpoint(repo, command), (info) ->
-    info
+    pages_info = info
+  pages_info
 
-fetch_from_info = (githubot, repo, command) ->
-  info = github_pages_info(githubot, repo, command)
+fetch_from_info = (info, command) ->
   if command in INFO_KEYS
-    command: info[command]
+    info[command]
   else
     info
 
@@ -54,18 +61,21 @@ formatted_build_text = (build) ->
 
 module.exports = (robot) ->
   github = require("githubot")(robot)
-  robot.respond /pages (\w+)( \w+\/\w+)?/i, (msg) ->
-    command   = msg.match[1].strip()
+  robot.respond /pages (\w+)( \w+\/[\w\.]+)?/i, (msg) ->
+    command   = msg.match[1]
     repo      = github.qualified_repo msg.match[2]
 
-    github.handleErrors (response) ->
-      msg.send "Error fetching info about GitHub Pages site for #{repo}: #{response.error}"
+    unless command in ALLOWED_COMMANDS
+      msg.send "Sorry, what was that? '#{command}' isn't a recognized command."
+      return
+
+    info = github_pages_info github, repo, command
+    unless info?
+      msg.send "No info found. Make sure you're authenticated and are the owner of the repo."
 
     if command in INFO_COMMANDS
-      msg.send JSON.stringify(fetch_from_info(command))
+      msg.send JSON.stringify fetch_from_info(info, command)
     else if command in BUILD_COMMANDS
-      info = github_pages_info(github, repo, command)
       msg.send (formatted_build_text(build) for build in info).join("\n")
     else if command in LATEST_COMMANDS
-      info = github_pages_info(github, repo, command)
-      msg.send formatted_build_text(info)
+      msg.send formatted_build_text info
