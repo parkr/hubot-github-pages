@@ -43,6 +43,7 @@ endpoint = (repo, command) ->
     "#{base}/builds/latest"
 
 github_pages_info = (githubot, repo, command) ->
+  console.log("Fetching info on repo '#{repo}'")
   githubot.handleErrors (response) ->
     console.log "Error fetching info about GitHub Pages site for #{repo}: #{reponse.statusCode} #{response.error}"
   pages_info = null
@@ -71,7 +72,7 @@ module.exports = (robot) ->
 
     info = github_pages_info github, repo, command
     unless info?
-      msg.send "No info found. Make sure you're authenticated and are the owner of the repo."
+      msg.send "No info found for '#{repo}'. Make sure you're authenticated and are the owner of the repo."
 
     if command in INFO_COMMANDS
       msg.send JSON.stringify fetch_from_info(info, command)
