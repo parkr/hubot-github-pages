@@ -43,7 +43,7 @@ github_pages_info = (githubot, repo, command) ->
 fetch_from_info = (githubot, repo, command) ->
   info = github_pages_info(githubot, repo, command)
   if command in INFO_KEYS
-    info[command]
+    command: info[command]
   else
     info
 
@@ -60,7 +60,7 @@ module.exports = (robot) ->
       msg.send "Error fetching info about GitHub Pages site for #{repo}: #{response.error}"
 
     if command in INFO_COMMANDS
-      msg.send fetch_from_info(command)
+      msg.send JSON.stringify(fetch_from_info(command))
     else if command in BUILD_COMMANDS
       info = github_pages_info(github, repo, command)
       msg.send (formatted_build_text(build) for build in info).join("\n")
