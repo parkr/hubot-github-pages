@@ -17,12 +17,10 @@ Commit the changes to your `package.json` and push up to Heroku!
 hubot-github-pages leans on [githubot][], which offers a few configuration
 options:
 
-| -------------------- | -------- | -----------------------------------------------------------------  |
-| Option               |          | Description                                                        |
-| `HUBOT_GITHUB_USER`  | Required | The GitHub username Hubot should use to authenticate with the API. |
-| `HUBOT_GITHUB_TOKEN` | Required | The token used to authenticate against the GitHub API.             |
-| `HUBOT_GITHUB_REPO`  | Optional | The default repo about which to ask questions.                     |
-| `HUBOT_GITHUB_API`   | Optional | The URL of the GitHub API, with no trailing slash.                 |
+- `HUBOT_GITHUB_USER`  (**required**) - The GitHub username Hubot should use to authenticate with the API.
+- `HUBOT_GITHUB_TOKEN` (**required**) - The token used to authenticate against the GitHub API.
+- `HUBOT_GITHUB_REPO`  (**optional**) - The default repo about which to ask questions.
+- `HUBOT_GITHUB_API`   (**optional**) - The URL of the GitHub API, with no trailing slash.
 
 [githubot]: https://github.com/iangreenleaf/githubot
 
