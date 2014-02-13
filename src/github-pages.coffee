@@ -20,6 +20,8 @@
 # Author:
 #   parkr
 
+console.log("Loading in hubot-github-pages...")
+
 timeago = require('timeago')
 
 INFO_KEYS       = ["cname", "status", "custom_404"]
