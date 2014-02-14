@@ -42,14 +42,11 @@ endpoint = (repo, command) ->
   else if command in LATEST_COMMANDS
     "#{base}/builds/latest"
 
-github_pages_info = (githubot, repo, command) ->
-  console.log("Fetching info on repo '#{repo}'")
+github_pages_info = (githubot, repo, command, cb) ->
   githubot.handleErrors (response) ->
     console.log "Error fetching info about GitHub Pages site for #{repo}: #{reponse.statusCode} #{response.error}"
-  pages_info = null
-  githubot.get endpoint(repo, command), (info) ->
-    pages_info = info
-  pages_info
+
+  githubot.get endpoint(repo, command), {}, cb
 
 fetch_from_info = (info, command) ->
   if command in INFO_KEYS
@@ -58,7 +55,7 @@ fetch_from_info = (info, command) ->
     info
 
 formatted_build_text = (build) ->
-  "Page build #{build.status}@#{build.commit.substr(0, 7)} Triggered by #{build.pusher} at #{timeago(build.created_at)}."
+  "Page build #{build.status} @ #{build.commit.substr(0, 7)}. Triggered by #{build.pusher.login} #{timeago(build.created_at)}."
 
 module.exports = (robot) ->
   github = require("githubot")(robot)
@@ -70,13 +67,18 @@ module.exports = (robot) ->
       msg.send "Sorry, what was that? '#{command}' isn't a recognized command."
       return
 
-    info = github_pages_info github, repo, command
-    unless info?
-      msg.send "No info found for '#{repo}'. Make sure you're authenticated and are the owner of the repo."
-
+    cb = null
     if command in INFO_COMMANDS
-      msg.send JSON.stringify fetch_from_info(info, command)
+      cb = (info) ->
+        msg.send "No info found for '#{repo}'." unless info?
+        msg.send JSON.stringify fetch_from_info(info, command)
     else if command in BUILD_COMMANDS
-      msg.send (formatted_build_text(build) for build in info).join("\n")
+      cb = (info) ->
+        msg.send "No info found for '#{repo}'." unless info?
+        msg.send (formatted_build_text(build) for build in info).join("\n")
     else if command in LATEST_COMMANDS
-      msg.send formatted_build_text info
+      cb = (info) ->
+        msg.send "No info found for '#{repo}'." unless info?
+        msg.send formatted_build_text info
+
+    github_pages_info github, repo, command, cb
