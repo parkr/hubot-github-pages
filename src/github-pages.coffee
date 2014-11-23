@@ -62,7 +62,7 @@ formatted_build_text = (build) ->
 
 formatted_versions = (versions) ->
   all = for gem, version of versions
-    "#{gem} = v#{version}"
+    "#{gem} v#{version}"
   all.join("\n")
 
 module.exports = (robot) ->
