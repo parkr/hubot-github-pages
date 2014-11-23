@@ -18,6 +18,7 @@
 #   hubot pages custom_404 [repo] - fetch whether there's a custom 404 page
 #   hubot pages latest [repo] - fetch latest build
 #   hubot pages builds [repo] - fetch the latest 30 builds
+#   hubot pages version - display the gem versions currently running on GitHub Pages
 #
 # Notes:
 #   Per the GitHub API, you must be the owner of the repo in question.
