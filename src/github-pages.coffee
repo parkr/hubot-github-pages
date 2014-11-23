@@ -60,6 +60,11 @@ fetch_from_info = (info, command) ->
 formatted_build_text = (build) ->
   "Page build #{build.status} @ #{build.commit.substr(0, 7)}. Triggered by #{build.pusher.login} #{timeago(build.created_at)}."
 
+formatted_versions = (versions) ->
+  all = for gem, version of versions
+    "#{gem} = v#{version}"
+  all.join("\n")
+
 module.exports = (robot) ->
   github = require("githubot")(robot)
   robot.respond /pages (\w+)( \w+\/[\w\.]+)?/i, (msg) ->
@@ -86,6 +91,6 @@ module.exports = (robot) ->
     else if command in VERSION_COMMANDS
       cb = (info) ->
         msg.send "No versions found. Is GitHub.com up?" unless info?
-        msg.send JSON.stringify info
+        msg.send formatted_versions(info)
 
     github_pages_info github, repo, command, cb
