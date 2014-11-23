@@ -31,7 +31,8 @@ INFO_KEYS        = ["cname", "status", "custom_404"]
 INFO_COMMANDS    = ["info"].concat(INFO_KEYS)
 BUILD_COMMANDS   = ["builds"]
 LATEST_COMMANDS  = ["latest"]
-ALLOWED_COMMANDS = INFO_COMMANDS.concat(BUILD_COMMANDS).concat(LATEST_COMMANDS)
+VERSION_COMMANDS = ["versions", "ver"]
+ALLOWED_COMMANDS = INFO_COMMANDS.concat(BUILD_COMMANDS).concat(LATEST_COMMANDS).concat(VERSION_COMMANDS)
 
 endpoint = (repo, command) ->
   base = "repos/#{repo}/pages"
@@ -41,6 +42,8 @@ endpoint = (repo, command) ->
     "#{base}/builds"
   else if command in LATEST_COMMANDS
     "#{base}/builds/latest"
+  else if command in VERSION_COMMANDS
+    "https://pages.github.com/versions.json"
 
 github_pages_info = (githubot, repo, command, cb) ->
   githubot.handleErrors (response) ->
@@ -80,5 +83,9 @@ module.exports = (robot) ->
       cb = (info) ->
         msg.send "No info found for '#{repo}'." unless info?
         msg.send formatted_build_text info
+    else if command in VERSION_COMMANDS
+      cb = (info) ->
+        msg.send "No versions found. Is GitHub.com up?" unless info?
+        msg.send JSON.stringify info
 
     github_pages_info github, repo, command, cb
