@@ -26,7 +26,7 @@
 # Author:
 #   parkr
 
-timeago = require('timeago')
+timeago = require('timeago.js')
 
 INFO_KEYS        = ["cname", "status", "custom_404"]
 INFO_COMMANDS    = ["info"].concat(INFO_KEYS)
@@ -59,7 +59,7 @@ fetch_from_info = (info, command) ->
     info
 
 formatted_build_text = (build) ->
-  "Page build #{build.status} @ #{build.commit.substr(0, 7)}. Triggered by #{build.pusher.login} #{timeago(build.created_at)}."
+  "Page build #{build.status} @ #{build.commit.substr(0, 7)}. Triggered by #{build.pusher.login} #{new timeago().format(build.created_at)}."
 
 formatted_versions = (versions) ->
   all = for gem, version of versions
